@@ -4,6 +4,13 @@ void main() {
   runApp(const MyApp());
 }
 
+class ToDoItem {
+  ToDoItem(this.content);
+  String content;
+  bool isChecked = false;
+
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
