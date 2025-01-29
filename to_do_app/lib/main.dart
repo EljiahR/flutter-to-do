@@ -1,13 +1,23 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => ToDoModel(),
+    child: MyApp()
+  ));
 }
 
 class ToDoItem {
   String content;
   bool isChecked = false;
   ToDoItem(this.content);
+
+  void toggleCheck() {
+    isChecked = !isChecked;
+  }
 
 }
 
@@ -20,21 +30,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -43,34 +38,83 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class ToDoModel extends ChangeNotifier {
+  final List<ToDoItem> _items = [];
+  var controller = TextEditingController();
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  List<ToDoItem> getList() {
+    return _items;
+  }
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  void addItem(String content) {
+    _items.add(ToDoItem(content));
+    controller.clear();
+    notifyListeners();
+  }
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  void toggleItemCheck(ToDoItem item) {
+    item.toggleCheck();
+    notifyListeners();
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({
+    super.key,
+    required this.title
+  });
 
-  List<ToDoItem> items = [];
-
-  void addItem(String newItem) {
-    setState(() => items = [...items, ToDoItem(newItem)]);
+  final String title;
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            Expanded(
+              child: Consumer<ToDoModel>(
+                builder: (context, todo, child) {
+                  return ToDoList(todo: todo);
+                },
+                ),
+            ),
+            SafeArea(
+              child: TextField(
+                controller: Provider.of<ToDoModel>(context).controller,
+                onSubmitted: (value) => Provider.of<ToDoModel>(context, listen: false).addItem(value),
+              ) 
+            )
+          ],
+        ),
+      )
+    );
   }
+}
+
+class ToDoList extends StatelessWidget {
+  const ToDoList({
+    super.key,
+    required this.todo
+  });
+
+  final ToDoModel todo;
 
   @override
   Widget build(BuildContext context) {
-    return Text("Fdafdsa");
+    return ListView(
+      children: [
+        for (var item in todo.getList())
+          Row(
+            children: [
+              Checkbox(
+                value: item.isChecked, 
+                onChanged: (value) => todo.toggleItemCheck(item)
+              ),
+              Text(item.content)
+            ],
+          )
+      ],
+    );
   }
 }
