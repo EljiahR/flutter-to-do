@@ -74,7 +74,7 @@ class MyHomePage extends StatelessWidget {
             Expanded(
               child: Consumer<ToDoModel>(
                 builder: (context, todo, child) {
-                  return ToDoList(todo: todo);
+                  return ToDoList();
                 },
                 ),
             ),
@@ -94,15 +94,13 @@ class MyHomePage extends StatelessWidget {
 }
 
 class ToDoList extends StatelessWidget {
-  const ToDoList({
-    super.key,
-    required this.todo
-  });
+  const ToDoList({super.key,});
 
-  final ToDoModel todo;
 
   @override
   Widget build(BuildContext context) {
+    final todo = Provider.of<ToDoModel>(context);
+
     return ListView.builder(
       itemCount: todo.items.length,
       itemBuilder: (context, index) {
