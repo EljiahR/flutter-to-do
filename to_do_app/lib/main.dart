@@ -55,6 +55,11 @@ class ToDoModel extends ChangeNotifier {
     _items[index].toggleCheck();
     notifyListeners();
   }
+
+  void deleteItem(int index) {
+    _items.removeAt(index);
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatelessWidget {
@@ -111,6 +116,10 @@ class ToDoList extends StatelessWidget {
             onChanged: (_) => todo.toggleItemCheck(index),
           ),
           title: Text(item.content),
+          trailing: IconButton(
+            onPressed: () => todo.deleteItem(index), 
+            icon: Icon(Icons.delete)
+          ),
         );
       },
     );
