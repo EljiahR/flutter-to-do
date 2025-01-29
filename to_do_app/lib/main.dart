@@ -42,18 +42,17 @@ class ToDoModel extends ChangeNotifier {
   final List<ToDoItem> _items = [];
   var controller = TextEditingController();
 
-  List<ToDoItem> getList() {
-    return _items;
-  }
+  UnmodifiableListView<ToDoItem> get items => UnmodifiableListView(_items);
 
   void addItem(String content) {
+    if (content.isEmpty) return;
     _items.add(ToDoItem(content));
     controller.clear();
     notifyListeners();
   }
 
-  void toggleItemCheck(ToDoItem item) {
-    item.toggleCheck();
+  void toggleItemCheck(int index) {
+    _items[index].toggleCheck();
     notifyListeners();
   }
 }
@@ -80,10 +79,12 @@ class MyHomePage extends StatelessWidget {
                 ),
             ),
             SafeArea(
-              child: TextField(
-                controller: Provider.of<ToDoModel>(context).controller,
-                onSubmitted: (value) => Provider.of<ToDoModel>(context, listen: false).addItem(value),
-              ) 
+              child: Consumer<ToDoModel>(
+                builder: (context, todo, child) => TextField(
+                  controller: todo.controller,
+                  onSubmitted: (value) => todo.addItem(value),
+                )
+              ),
             )
           ],
         ),
@@ -102,19 +103,18 @@ class ToDoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        for (var item in todo.getList())
-          Row(
-            children: [
-              Checkbox(
-                value: item.isChecked, 
-                onChanged: (value) => todo.toggleItemCheck(item)
-              ),
-              Text(item.content)
-            ],
-          )
-      ],
+    return ListView.builder(
+      itemCount: todo.items.length,
+      itemBuilder: (context, index) {
+        final item = todo.items[index];
+        return ListTile(
+          leading: Checkbox(
+            value: item.isChecked,
+            onChanged: (_) => todo.toggleItemCheck(index),
+          ),
+          title: Text(item.content),
+        );
+      },
     );
   }
 }
