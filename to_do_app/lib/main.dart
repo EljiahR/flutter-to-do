@@ -106,7 +106,7 @@ class ToDoList extends StatelessWidget {
   Widget build(BuildContext context) {
     final todo = Provider.of<ToDoModel>(context);
 
-    return ListView.builder(
+    return ListView.separated(
       itemCount: todo.items.length,
       itemBuilder: (context, index) {
         final item = todo.items[index];
@@ -122,6 +122,7 @@ class ToDoList extends StatelessWidget {
           ),
         );
       },
+      separatorBuilder:(context, index) => Divider(),
     );
   }
 }
