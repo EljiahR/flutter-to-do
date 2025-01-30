@@ -1,13 +1,9 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-    create: (context) => ToDoModel(),
-    child: MyApp()
-  ));
+  runApp(const MyApp());
 }
 
 class ToDoItem {
@@ -28,19 +24,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: "To-do App",
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'To-do App'),
+      home: ChangeNotifierProvider(
+        create: (context) => ToDoProvider(),
+        child: MyHomePage()
+  ),
     );
   }
 }
 
-class ToDoModel extends ChangeNotifier {
+class ToDoProvider extends ChangeNotifier {
   final List<ToDoItem> _items = [];
-  var controller = TextEditingController();
+  final controller = TextEditingController();
 
   UnmodifiableListView<ToDoItem> get items => UnmodifiableListView(_items);
 
@@ -65,31 +64,23 @@ class ToDoModel extends ChangeNotifier {
 class MyHomePage extends StatelessWidget {
   const MyHomePage({
     super.key,
-    required this.title
   });
-
-  final String title;
   
   @override
   Widget build(BuildContext context) {
+    final todo = context.read<ToDoProvider>();
     return Scaffold(
       body: Center(
         child: Column(
           children: [
             Expanded(
-              child: Consumer<ToDoModel>(
-                builder: (context, todo, child) {
-                  return ToDoList();
-                },
-                ),
+              child: ToDoList(),
             ),
             SafeArea(
-              child: Consumer<ToDoModel>(
-                builder: (context, todo, child) => TextField(
+              child: TextField(
                   controller: todo.controller,
                   onSubmitted: (value) => todo.addItem(value),
-                )
-              ),
+                ),
             )
           ],
         ),
@@ -104,7 +95,7 @@ class ToDoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final todo = Provider.of<ToDoModel>(context);
+    final todo = context.watch<ToDoProvider>();
 
     return ListView.separated(
       itemCount: todo.items.length,
