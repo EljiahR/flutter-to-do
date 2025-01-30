@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './pages/my_home_page.dart';
+import 'pages/home_page.dart';
 import './providers/to_do_provider.dart';
 
 
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       ),
       home: ChangeNotifierProvider(
         create: (context) => ToDoProvider(),
-        child: MyHomePage()
+        child: HomePage()
   ),
     );
   }

@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/to_do_provider.dart';
 import '../widgets/to_do_list.dart';
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({
+class HomePage extends StatelessWidget {
+  const HomePage({
     super.key,
   });
   
@@ -22,6 +22,7 @@ class MyHomePage extends StatelessWidget {
               child: TextField(
                   controller: todo.controller,
                   onSubmitted: (value) => todo.addItem(value),
+                  focusNode: todo.focusNode,
                 ),
             )
           ],

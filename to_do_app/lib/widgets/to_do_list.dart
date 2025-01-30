@@ -14,12 +14,15 @@ class ToDoList extends StatelessWidget {
       itemCount: todo.items.length,
       itemBuilder: (context, index) {
         final item = todo.items[index];
+        void toggleItem() => todo.toggleItemCheck(index);
+        
         return ListTile(
           leading: Checkbox(
             value: item.isChecked,
-            onChanged: (_) => todo.toggleItemCheck(index),
+            onChanged: (_) => toggleItem(),
           ),
           title: Text(item.content),
+          onTap: () => toggleItem(),
           trailing: IconButton(
             onPressed: () => todo.deleteItem(index), 
             icon: Icon(Icons.delete)

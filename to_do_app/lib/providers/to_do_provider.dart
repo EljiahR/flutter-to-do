@@ -6,6 +6,7 @@ import '../models/to_do_item.dart';
 class ToDoProvider extends ChangeNotifier {
   final List<ToDoItem> _items = [];
   final controller = TextEditingController();
+  final focusNode = FocusNode();
 
   UnmodifiableListView<ToDoItem> get items => UnmodifiableListView(_items);
 
@@ -13,6 +14,7 @@ class ToDoProvider extends ChangeNotifier {
     if (content.isEmpty) return;
     _items.add(ToDoItem(content));
     controller.clear();
+    focusNode.requestFocus();
     notifyListeners();
   }
 
