@@ -1,30 +1,34 @@
-import 'dart:collection';
 import 'package:flutter/material.dart';
-import '../models/to_do_item.dart';
+import 'package:hive/hive.dart';
+import '../models/todo_item.dart';
 
 
 class ToDoProvider extends ChangeNotifier {
-  final List<ToDoItem> _items = [];
+  final _todoBox = Hive.box<ToDoItem>("todos");
+
+
   final controller = TextEditingController();
   final focusNode = FocusNode();
 
-  UnmodifiableListView<ToDoItem> get items => UnmodifiableListView(_items);
+  List<ToDoItem> get items => _todoBox.values.toList();
 
   void addItem(String content) {
     if (content.isEmpty) return;
-    _items.add(ToDoItem(content));
+    
+    final newItem = ToDoItem(content: content);
+    _todoBox.add(newItem);
     controller.clear();
     focusNode.requestFocus();
     notifyListeners();
   }
 
-  void toggleItemCheck(int index) {
-    _items[index].toggleCheck();
+  void toggleItemCheck(ToDoItem item) {
+    item.toggleCheck();
     notifyListeners();
   }
 
   void deleteItem(int index) {
-    _items.removeAt(index);
+    _todoBox.deleteAt(index);
     notifyListeners();
   }
 }

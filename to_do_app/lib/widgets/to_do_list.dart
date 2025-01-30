@@ -14,8 +14,8 @@ class ToDoList extends StatelessWidget {
       itemCount: todo.items.length,
       itemBuilder: (context, index) {
         final item = todo.items[index];
-        void toggleItem() => todo.toggleItemCheck(index);
-        
+        void toggleItem() => todo.toggleItemCheck(item);
+
         return ListTile(
           leading: Checkbox(
             value: item.isChecked,

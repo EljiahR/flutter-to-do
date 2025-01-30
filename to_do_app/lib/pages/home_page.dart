@@ -19,11 +19,18 @@ class HomePage extends StatelessWidget {
               child: ToDoList(),
             ),
             SafeArea(
-              child: TextField(
-                  controller: todo.controller,
-                  onSubmitted: (value) => todo.addItem(value),
-                  focusNode: todo.focusNode,
-                ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                    controller: todo.controller,
+                    onSubmitted: (value) => todo.addItem(value),
+                    focusNode: todo.focusNode,
+                    decoration: InputDecoration(
+                      hintText: "Enter a new item...",
+                      border: OutlineInputBorder()
+                    ),
+                  ),
+              ),
             )
           ],
         ),
